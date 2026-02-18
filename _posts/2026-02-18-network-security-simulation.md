@@ -1,6 +1,6 @@
 ---
 title: "Securing the Perimeter: Network Simulation and Threat Detection"
-date: 2026-02-18 20:04:00 +0300
+date: 2026-02-18 19:50:00 +0300
 categories: [Networking, Cybersecurity]
 tags: [cisco-packet-tracer, tcpdump, network-security]
 ---
