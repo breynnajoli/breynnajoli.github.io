@@ -1,6 +1,6 @@
 ---
 title: "Hunting in the Wires: PCAP Forensics and Network Traffic Analysis"
-date: 2026-02-18 20:30:00 
+date: 2026-02-18 20:30:00 +0300
 categories: [Cybersecurity, Digital Forensics]
 tags: [wireshark, tcpdump, pcap, tryhackme]
 ---
