@@ -5,7 +5,7 @@ title: Resume
 order: 4
 ---
 
-> 📥 **[Click Here to Download My Official CV (PDF)](/assets/Breyn_Najoli_CV.pdf)**
+> 📥 **[Click Here to Download My Official CV (PDF)](/assets/Breyn_Najoli-CV.pdf)**
 {: .prompt-info }
 
 ---
