@@ -13,6 +13,8 @@ In cybersecurity and cloud engineering, theoretical knowledge must be backed by 
 
 ### 🌐 1. Network Architecture & Security (Cisco Packet Tracer)
 Designing secure, resilient network topologies from the ground up.
+* **Site-to-Site IPsec VPN Tunnels:** Architected secure, encrypted communication channels between remote Cisco routers by configuring ISAKMP Phase 1 (AES encryption, pre-shared key authentication) and IPsec Phase 2 (3DES encryption, SHA-HMAC for data integrity).
+
 * **Secure Layer 2 Infrastructure:** Segmented network traffic into designated VLANs (e.g., VLAN 10, 333, 999) and deployed 802.1Q trunking with dedicated native VLANs to harden the environment against common threats.
 * **Switch Security Configuration:** Restricted unauthorized access by configuring Port Security (including absolute/inactivity aging and sticky MAC addresses with protect violation modes), PortFast, and BPDU Guard.
 * **DHCP Threat Mitigation:** Implemented DHCP Snooping to actively prevent rogue DHCP services from compromising the network.
