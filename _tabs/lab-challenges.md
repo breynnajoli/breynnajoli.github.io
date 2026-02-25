@@ -20,7 +20,6 @@ Designing secure, resilient network topologies from the ground up.
 
 ### 🔐 2. Enterprise VPN Architecture
 Establishing secure, encrypted wide-area network communications.
-
 * **Site-to-Site IPsec VPN Tunnels:** Architected secure communication channels between remote Cisco routers by configuring ISAKMP Phase 1 (AES encryption, pre-shared key authentication) and IPsec Phase 2 (3DES encryption, SHA-HMAC for data integrity).
 
 ### 🕵️‍♂️ 3. Digital Forensics & Traffic Analysis (Blue Team)
@@ -35,7 +34,6 @@ Understanding how data travels, resolves, and is manipulated across the internet
 
 ### 🖥️ 5. Web Server Infrastructure
 Managing and securing the backbone of web applications.
-
 * **Server Architecture & Workflows:** Analyzed the underlying architecture of the "Big Three" web servers (Apache, NGINX, IIS), including their request-handling workflows.
 * **HTTP Status Code Diagnostics:** Investigated server-side HTTP response codes (e.g., 200 OK, 404 NOT FOUND, 500 Internal Server Error) to understand web infrastructure health and identify potential misconfigurations.
 
@@ -47,6 +45,12 @@ Applying the principle of least privilege in cloud environments.
 ### 🔧 7. Hardware & IoT Integration
 Bridging the gap between physical sensors and logical control.
 * **Microcontroller Systems:** Designing C++ firmware for multi-sensor safety systems (Fire, Gas, and Sound detection) and troubleshooting real-world circuit voltage drops.
+
+### 🛡️ 8. Network Security Appliances (Cisco ASA)
+Deploying and managing enterprise-grade perimeter firewalls.
+* **Firewall Initialization & Zoning:** Configured a Cisco ASA 5506-X via CLI, establishing distinct security zones (INSIDE: 100, DMZ: 70, OUTSIDE: 0) to enforce strict traffic flow.
+* **NAT & Routing Implementations:** Configured Port Address Translation (PAT) for internal network internet access and deployed Static NAT to expose a DMZ web server securely.
+* **Access Control & Remote Management:** Built and applied Access Control Lists (ACLs) to permit external traffic (TCP port 80) into the DMZ, while securing device administration through local AAA authentication and SSH.
 
 ---
 
