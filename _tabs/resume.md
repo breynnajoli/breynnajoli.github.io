@@ -4,7 +4,7 @@ icon: fas fa-file-alt
 order: 4
 ---
 
-> **[📥 Click here to view or download my full CV as a PDF](/assets/docs/Breyn_Najoli_CV.pdf)**
+> **[📥 Click here to view or download my full CV as a PDF](/assets/Breyn_Najoli_CV.pdf)**
 
 ## Breyn Bush Najoli
 **Control and Instrumentation Engineer | AWS Certified Cloud Practitioner**
