@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCADA HMI Roundabout Simulation</title>
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #8c8c8c; /* Industrial gray */
+        color: black;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    /* Top Left Status Panel */
+    #status-panel {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        border: 2px solid black;
+        padding: 10px;
+        font-size: 24px;
+        font-weight: bold;
+        min-width: 150px;
+        min-height: 120px;
+    }
+    .status-line { margin: 5px 0; }
+
+    /* Top Right Master Timer */
+    #dashboard {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: white;
+        border: 2px solid black;
+        padding: 10px;
+        font-weight: bold;
+        box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+    }
+
+    .intersection {
+        position: relative;
+        width: 600px;
+        height: 600px;
+    }
+
+    /* Roundabout Center */
+    .roundabout {
+        position: absolute;
+        top: 225px;
+        left: 225px;
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        border: 2px solid black;
+    }
+
+    /* Approach Lines */
+    .line { position: absolute; background: black; }
+    .line.v { width: 2px; height: 180px; left: 300px; }
+    .line.h { height: 2px; width: 180px; top: 300px; }
+    .l-n { top: 0; } .l-s { bottom: 0; }
+    .l-e { right: 0; } .l-w { left: 0; }
+
+    /* Traffic Lights (Black Box, White Bulbs) */
+    .light-box {
+        position: absolute;
+        background: black;
+        padding: 5px;
+        display: flex;
+        gap: 5px;
+    }
+    .light-box.vert { flex-direction: column; }
+    .light-box.horiz { flex-direction: row; }
+    .bulb {
+        width: 30px;
+        height: 30px;
+        border-radius: 30%; /* Slightly rounded rectangles like the image */
+        background: white;
+        border: 1px solid #555;
+    }
+    .bulb.r.on { background: #ff3333; box-shadow: 0 0 10px #ff3333; border-color: #ff3333; }
+    .bulb.y.on { background: #ffcc00; box-shadow: 0 0 10px #ffcc00; border-color: #ffcc00; }
+    .bulb.g.on { background: #33cc33; box-shadow: 0 0 10px #33cc33; border-color: #33cc33; }
+
+    /* Text Boxes */
+    .textbox {
+        position: absolute;
+        background: white;
+        border: 2px solid black;
+        padding: 5px;
+        font-weight: bold;
+        text-align: center;
+        box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+    }
+
+    /* Sensor Loop (Striped) */
+    .sensor-loop {
+        position: absolute;
+        width: 15px;
+        height: 40px;
+        background: repeating-linear-gradient(
+            45deg,
+            #e6e600,
+            #e6e600 5px,
+            black 5px,
+            black 10px
+        );
+        border: 1px solid black;
+    }
+    .sensor-loop.horiz { width: 40px; height: 15px; }
+
+    /* Blinking Arrows */
+    .arrow {
+        position: absolute;
+        font-size: 60px;
+        color: #33cc33;
+        display: none; /* Hidden by default */
+        text-shadow: 0 0 10px #33cc33;
+        animation: blinker 1s linear infinite;
+    }
+    @keyframes blinker {
+        50% { opacity: 0; }
+    }
+
+    /* Control Buttons */
+    .btn {
+        position: absolute;
+        padding: 5px 10px;
+        background: #000;
+        color: white;
+        border: 2px solid white;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    .btn.active { background: #ff3333; }
+
+    /* --- Positioning --- */
+    /* A1 (Bottom/North-facing) */
+    .light-a1 { bottom: 30px; left: 180px; }
+    .time-a1 { bottom: -10px; left: 165px; width: 80px; }
+    .stop-a1 { bottom: 180px; left: 240px; }
+    .sens-loop-a1 { bottom: 220px; left: 255px; }
+    .arrow-a1 { bottom: 100px; left: 320px; }
+    .btn-a1 { bottom: 10px; left: 450px; }
+
+    /* B1 (Left/East-facing) */
+    .light-b1 { top: 120px; left: 30px; }
+    .time-b1 { top: 165px; left: 30px; width: 100px; }
+    .stop-b1 { top: 240px; left: 180px; }
+    .sens-loop-b1 { top: 255px; left: 220px; }
+    .arrow-b1 { top: 180px; left: 100px; transform: rotate(90deg); }
+    .btn-b1 { top: 10px; left: 350px; }
+
+    /* A2 (Top/South-facing) */
+    .light-a2 { top: 10px; left: 380px; }
+    .time-a2 { top: 130px; left: 360px; width: 80px; }
+    .stop-a2 { top: 160px; left: 320px; }
+    .sens-loop-a2 { top: 200px; left: 330px; }
+    .arrow-a2 { top: 80px; left: 220px; transform: rotate(180deg); }
+    .btn-a2 { top: 10px; left: 450px; }
+
+    /* B2 (Right/West-facing) */
+    .light-b2 { bottom: 150px; right: 30px; }
+    .time-b2 { bottom: 110px; right: 30px; width: 100px; }
+    .stop-b2 { bottom: 240px; right: 180px; }
+    .sens-loop-b2 { bottom: 255px; right: 220px; }
+    .arrow-b2 { bottom: 180px; right: 100px; transform: rotate(-90deg); }
+    .btn-b2 { bottom: 10px; left: 350px; }
+
+</style>
+</head>
+<body>
+
+<div id="status-panel">
+    <div class="status-line" id="stat-A1">Traffic in A1</div>
+    <div class="status-line" id="stat-B1">Traffic in B1</div>
+    <div class="status-line" id="stat-A2">Traffic in A2</div>
+    <div class="status-line" id="stat-B2">Traffic in B2</div>
+</div>
+
+<div id="dashboard">
+    Master Timer: <span id="timer">0</span>s
+</div>
+
+<div class="intersection">
+    <div class="roundabout"></div>
+    <div class="line v l-n"></div>
+    <div class="line v l-s"></div>
+    <div class="line h l-e"></div>
+    <div class="line h l-w"></div>
+
+    <div class="light-box vert light-a1"><div class="bulb r" id="a1-r"></div><div class="bulb y" id="a1-y"></div><div class="bulb g" id="a1-g"></div></div>
+    <div class="textbox time-a1">Time in s: <br><span id="time-a1-val">-</span></div>
+    <div class="textbox stop-a1">stop</div>
+    <div class="sensor-loop sens-loop-a1"></div>
+    <div class="arrow arrow-a1" id="arrow-a1">⬆</div>
+    <button class="btn btn-a1 active" id="btn-A1" onclick="toggleSensor('A1')">A1 Sensor (ON)</button>
+
+    <div class="light-box horiz light-b1"><div class="bulb r" id="b1-r"></div><div class="bulb y" id="b1-y"></div><div class="bulb g" id="b1-g"></div></div>
+    <div class="textbox time-b1">Time in s: <span id="time-b1-val">-</span></div>
+    <div class="textbox stop-b1">stop</div>
+    <div class="sensor-loop horiz sens-loop-b1"></div>
+    <div class="arrow arrow-b1" id="arrow-b1">⬆</div>
+    <button class="btn btn-b1 active" id="btn-B1" onclick="toggleSensor('B1')">B1 Sensor (ON)</button>
+
+    <div class="light-box vert light-a2"><div class="bulb r" id="a2-r"></div><div class="bulb y" id="a2-y"></div><div class="bulb g" id="a2-g"></div></div>
+    <div class="textbox time-a2">Time in s: <br><span id="time-a2-val">-</span></div>
+    <div class="textbox stop-a2">stop</div>
+    <div class="sensor-loop sens-loop-a2"></div>
+    <div class="arrow arrow-a2" id="arrow-a2">⬆</div>
+    <button class="btn btn-a2 active" id="btn-A2" onclick="toggleSensor('A2')">A2 Sensor (ON)</button>
+
+    <div class="light-box horiz light-b2"><div class="bulb r" id="b2-r"></div><div class="bulb y" id="b2-y"></div><div class="bulb g" id="b2-g"></div></div>
+    <div class="textbox time-b2">Time in s: <span id="time-b2-val">-</span></div>
+    <div class="textbox stop-b2">stop</div>
+    <div class="sensor-loop horiz sens-loop-b2"></div>
+    <div class="arrow arrow-b2" id="arrow-b2">⬆</div>
+    <button class="btn btn-b2 active" id="btn-B2" onclick="toggleSensor('B2')">B2 Sensor (ON)</button>
+</div>
+
+<script>
+    let Traffic_Timer = 0;
+    let sensors = { A1: 1, B1: 1, A2: 1, B2: 1 };
+
+    function toggleSensor(lane) {
+        sensors[lane] = sensors[lane] === 1 ? 0 : 1;
+        const btn = document.getElementById('btn-' + lane);
+        const statLine = document.getElementById('stat-' + lane);
+        
+        if (sensors[lane] === 1) {
+            btn.classList.add('active');
+            btn.innerText = lane + ' Sensor (ON)';
+            statLine.style.display = 'block';
+        } else {
+            btn.classList.remove('active');
+            btn.innerText = lane + ' Sensor (OFF)';
+            statLine.style.display = 'none';
+        }
+    }
+
+    function setLight(lane, r, y, g) {
+        document.getElementById(lane + '-r').className = 'bulb r ' + (r ? 'on' : '');
+        document.getElementById(lane + '-y').className = 'bulb y ' + (y ? 'on' : '');
+        document.getElementById(lane + '-g').className = 'bulb g ' + (g ? 'on' : '');
+        
+        // Handle blinking arrow visibility
+        const arrow = document.getElementById('arrow-' + lane);
+        if (g) {
+            arrow.style.display = 'block';
+        } else {
+            arrow.style.display = 'none';
+        }
+    }
+
+    function runSCADALogic() {
+        // Sensor Skip Logic
+        if (Traffic_Timer >= 10 && Traffic_Timer <= 25 && sensors.A1 === 0) Traffic_Timer = 26;
+        if (Traffic_Timer >= 40 && Traffic_Timer <= 55 && sensors.B1 === 0) Traffic_Timer = 56;
+        if (Traffic_Timer >= 70 && Traffic_Timer <= 85 && sensors.A2 === 0) Traffic_Timer = 86;
+        if (Traffic_Timer >= 100 && Traffic_Timer <= 115 && sensors.B2 === 0) Traffic_Timer = 116;
+
+        Traffic_Timer++;
+        if (Traffic_Timer > 120) Traffic_Timer = 0;
+        document.getElementById('timer').innerText = Traffic_Timer;
+
+        // Reset Countdowns
+        let cdA1 = "-", cdB1 = "-", cdA2 = "-", cdB2 = "-";
+
+        // Switching Logic
+        if (Traffic_Timer <= 25) {
+            setLight('a1', 0, 0, 1); setLight('b1', 1, 0, 0); setLight('a2', 1, 0, 0); setLight('b2', 1, 0, 0);
+            cdA1 = 25 - Traffic_Timer;
+        } else if (Traffic_Timer > 25 && Traffic_Timer <= 30) {
+            setLight('a1', 1, 0, 0); setLight('b1', 0, 1, 0); setLight('a2', 1, 0, 0); setLight('b2', 1, 0, 0);
+        } else if (Traffic_Timer > 30 && Traffic_Timer <= 55) {
+            setLight('a1', 1, 0, 0); setLight('b1', 0, 0, 1); setLight('a2', 1, 0, 0); setLight('b2', 1, 0, 0);
+            cdB1 = 55 - Traffic_Timer;
+        } else if (Traffic_Timer > 55 && Traffic_Timer <= 60) {
+            setLight('a1', 1, 0, 0); setLight('b1', 1, 0, 0); setLight('a2', 0, 1, 0); setLight('b2', 1, 0, 0);
+        } else if (Traffic_Timer > 60 && Traffic_Timer <= 85) {
+            setLight('a1', 1, 0, 0); setLight('b1', 1, 0, 0); setLight('a2', 0, 0, 1); setLight('b2', 1, 0, 0);
+            cdA2 = 85 - Traffic_Timer;
+        } else if (Traffic_Timer > 85 && Traffic_Timer <= 90) {
+            setLight('a1', 1, 0, 0); setLight('b1', 1, 0, 0); setLight('a2', 1, 0, 0); setLight('b2', 0, 1, 0);
+        } else if (Traffic_Timer > 90 && Traffic_Timer <= 115) {
+            setLight('a1', 1, 0, 0); setLight('b1', 1, 0, 0); setLight('a2', 1, 0, 0); setLight('b2', 0, 0, 1);
+            cdB2 = 115 - Traffic_Timer;
+        } else if (Traffic_Timer > 115 && Traffic_Timer <= 120) {
+            setLight('a1', 0, 1, 0); setLight('b1', 1, 0, 0); setLight('a2', 1, 0, 0); setLight('b2', 1, 0, 0);
+        }
+
+        // Update UI Countdowns
+        document.getElementById('time-a1-val').innerText = cdA1;
+        document.getElementById('time-b1-val').innerText = cdB1;
+        document.getElementById('time-a2-val').innerText = cdA2;
+        document.getElementById('time-b2-val').innerText = cdB2;
+    }
+
+    // Run interval (faster than real-time for portfolio viewing)
+    setInterval(runSCADALogic, 500); 
+</script>
+</body>
+</html>
