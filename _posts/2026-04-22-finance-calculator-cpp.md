@@ -17,9 +17,13 @@ A robust C++ console application designed to calculate investment returns using 
 
 ## 💻 The Source Code
 
-Here is the complete C++ code for the calculator:
+/*
+ * Project: Kenyan Finance & Tax Calculator
+ * Author: Breyn Bush Najoli
+ * Date: April 2026
+ * Copyright (c) 2026 Breyn Bush Najoli. All rights reserved
+ */
 
-```cpp
 #include <iostream>
 #include <cmath>
 #include <iomanip>
